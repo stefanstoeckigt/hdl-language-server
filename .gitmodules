@@ -1,0 +1,6 @@
+[submodule "language-server-protocol"]
+	path = language-server-protocol
+	url = https://github.com/stefanstoeckigt/language-server-protocol.git
+[submodule "hdl-parser"]
+	path = hdl-parser
+	url = https://github.com/stefanstoeckigt/hdl-parser.git

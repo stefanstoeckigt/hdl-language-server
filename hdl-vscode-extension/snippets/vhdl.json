@@ -1,0 +1,338 @@
+{
+	"apro": {
+		"prefix": "procces",
+		"body": "\n${1:identifier} : process (${2:sensitivity_list})\nbegin\n\t$0\nend process ${1:identifier};\n",
+		"description": "asynchronous process",
+		"scope": "source.vhdl"
+	},
+	"arch": {
+		"prefix": "architecture",
+		"body": "\narchitecture ${1:${TM_FILENAME/(.*?)(\\..+)/$1/}}_arc of ${1:${TM_FILENAME/(.*?)(\\..+)/$1/}} is\n\n\tsignal ${2:clock} $0: ${3:std_logic};\n\nbegin\n\nend ${1:${TM_FILENAME/(.*?)(\\..+)/$1/}}_arc;\n",
+		"description": "architecture",
+		"scope": "source.vhdl"
+	},
+	"att": {
+		"prefix": "attribute",
+		"body": "\nattribute ${1:name} of ${2:signal} : signal is ${3:\"TRUE\"};\n$0\n",
+		"description": "attribute signal assignment",
+		"scope": "source.vhdl"
+	},
+	"atars": {
+		"prefix": "attribute",
+		"body": "\nattribute ASYNC_REG of ${1:signal} : signal is \"TRUE\";\n$0\n",
+		"description": "attribute asynchronous (metastable) registers signal assignment",
+		"scope": "source.vhdl"
+	},
+	"atar": {
+		"prefix": "attribute",
+		"body": "\nattribute ASYNC_REG : string;\nattribute ASYNC_REG of ${1:signal} : signal is \"TRUE\";\n$0\n",
+		"description": "attribute asynchronous (metastable) registers signal definition and assignment",
+		"scope": "source.vhdl"
+	},
+	"atmds": {
+		"prefix": "attribute",
+		"body": "\nattribute MARK_DEBUG of ${1:signal} : signal is \"TRUE\";\n$0\n",
+		"description": "attribute mark debug signal assignment",
+		"scope": "source.vhdl"
+	},
+	"atmd": {
+		"prefix": "attribute",
+		"body": "\nattribute MARK_DEBUG : string;\nattribute MARK_DEBUG of ${1:signal} : signal is \"TRUE\";\n$0\n",
+		"description": "attribute mark debug signal definition and assignment",
+		"scope": "source.vhdl"
+	},
+	"attr": {
+		"prefix": "attribute",
+		"body": "\nattribute ${1:name} : ${2:string};\nattribute ${1:name} of ${3:signal} : signal is ${4:\"TRUE\"};\n$0\n",
+		"description": "attribute signal definition and assignment",
+		"scope": "source.vhdl"
+	},
+	"be": {
+		"prefix": "begin",
+		"body": "\nbegin\n\t$0\nend\n",
+		"description": "process or entity begin phrase",
+		"scope": "source.vhdl"
+	},
+	"bl": {
+		"prefix": "block",
+		"body": "\nblock ${1:name}\n\t$0\nend block ${1:name};\n",
+		"description": "block, end block code construct",
+		"scope": "source.vhdl"
+	},
+	"box": {
+		"prefix": "box",
+		"body": "\n--------------------------------------------------------------------------------\n--  $0                                                                        --\n--------------------------------------------------------------------------------\n",
+		"description": "comment box for VHDL",
+		"scope": "source.vhdl"
+	},
+	"case": {
+		"prefix": "case",
+		"body": "\ncase(${1:signal_name}) is\n\twhen ${2:IDLE} => \n\t\t$0;\n\twhen others =>\n\t\tnull;\nend case;\n",
+		"description": "case",
+		"scope": "source.vhdl"
+	},
+	"comp": {
+		"prefix": "component",
+		"body": "\ncomponent ${1:name}\n\tgeneric (\n\t)\n\tport (\n\t\t${2:clock} : ${3:std_logic};\n\t\t$0\n\t);\nend component;\n",
+		"description": "component declaration with generic",
+		"scope": "source.vhdl"
+	},
+	"co": {
+		"prefix": "constant",
+		"body": "\nconstant ${1:name} : ${2:boolean} := ${3:value};\n$0\n",
+		"description": "constant signal definition",
+		"scope": "source.vhdl"
+	},
+	"conv_i": {
+		"prefix": "conv_integer",
+		"body": "\nconv_integer(${1:value})$0\n",
+		"description": "to integer type conversion, std_logic_arith library",
+		"scope": "source.vhdl"
+	},
+	"conv_si": {
+		"prefix": "conv_signed",
+		"body": "\nconv_signed(${1:value}, ${2:size})$0\n",
+		"description": "to signed type conversion, std_logic_arith library",
+		"scope": "source.vhdl"
+	},
+	"conv_st": {
+		"prefix": "conv_std_logic_vector",
+		"body": "\nconv_std_logic_vector(${1:value}, ${2:size})$0\n",
+		"description": "to std_logic_vector type conversion, std_logic_arith library",
+		"scope": "source.vhdl"
+	},
+	"conv_u": {
+		"prefix": "conv_unsigned",
+		"body": "\nconv_unsigned(${1:value}, ${2:size})$0\n",
+		"description": "to unsigned type conversion, std_logic_arith library",
+		"scope": "source.vhdl"
+	},
+	"el": {
+		"prefix": "else",
+		"body": "\nelse\n\t$0\n",
+		"description": "else",
+		"scope": "source.vhdl"
+	},
+	"elsif": {
+		"prefix": "elsif",
+		"body": "\nelsif (${1:expression}) then\n\t$0\n",
+		"description": "elsif",
+		"scope": "source.vhdl"
+	},
+	"ent": {
+		"prefix": "entity",
+		"body": "\nentity ${1:${TM_FILENAME/(.*?)(\\..+)/$1/}} is\n\tport (\n\t\t${2:clock} $0: ${3:std_logic};\n\t);\nend ${1:${TM_FILENAME/(.*?)(\\..+)/$1/}};\n",
+		"description": "entity declaration",
+		"scope": "source.vhdl"
+	},
+	"entarch": {
+		"prefix": "entity",
+		"body": "\nentity ${1:${TM_FILENAME/(.*?)(\\..+)/$1/}} is\n\tport (\n\t\t${2:clock} $0: ${3:std_logic};\n\t);\nend ${1:${TM_FILENAME/(.*?)(\\..+)/$1/}};\n\narchitecture ${1:${TM_FILENAME/(.*?)(\\..+)/$1/}}_arc of ${1:${TM_FILENAME/(.*?)(\\..+)/$1/}} is\nbegin\n\nend ${1:${TM_FILENAME/(.*?)(\\..+)/$1/}}_arc;\n",
+		"description": "entity architecture",
+		"scope": "source.vhdl"
+	},
+	"for": {
+		"prefix": "for",
+		"body": "\n${1:identifier} : for ${2:i} in ${3:0} to ${4:10} loop\n\t$0\nend loop;\n",
+		"description": "for loop",
+		"scope": "source.vhdl"
+	},
+	"forg": {
+		"prefix": "forg",
+		"body": "\n${1:identifier} : for ${2:i} in ${3:x} to ${4:y} generate\n\t$0\nend generate;\n",
+		"description": "for generate",
+		"scope": "source.vhdl"
+	},
+	"fu": {
+		"prefix": "function",
+		"body": "\nfunction ${1:name} (${2:sensitivity_list}: ${3:signal_type}) return ${4:return_type} is\nbegin\n\t$0\n\treturn ${5:return_signal};\nend ${1:name};\n",
+		"description": "function definition",
+		"scope": "source.vhdl"
+	},
+	"fd": {
+		"prefix": "function",
+		"body": "\nfunction ${1:name} (${2:sensitivity_list}: ${3:signal_type}) return ${4:return_type}\n$0\n",
+		"description": "function declaration",
+		"scope": "source.vhdl"
+	},
+	"generic": {
+		"prefix": "generic",
+		"body": "\ngeneric (\n\t\t${1:signal} $0: ${2:boolean};\n\t);\n",
+		"description": "entity architecture",
+		"scope": "source.vhdl"
+	},
+	"head": {
+		"prefix": "head",
+		"body": "\n--------------------------------------------------------------------------------\n--\n-- Title    : ${1:$TM_FILENAME}\n-- Project  : ${2:Integrated Radio Design}\n-- Author   : ${3:Chris Cornish}\n-- Date     : ${4:Day}/${5:Month}/${6:YEAR}\n--------------------------------------------------------------------------------\n--\n-- Description\n-- $0\n--------------------------------------------------------------------------------\n\n",
+		"description": "header",
+		"scope": "source.vhdl"
+	},
+	"if": {
+		"prefix": "if",
+		"body": "\nif (${1:expression}) then\n\t$0\nend if;\n",
+		"description": "if",
+		"scope": "source.vhdl"
+	},
+	"ig": {
+		"prefix": "if",
+		"body": "\nif (${1:variable}) generate\n\t$0\nend generate;\n",
+		"description": "if condition generate",
+		"scope": "source.vhdl"
+	},
+	"li": {
+		"prefix": "library",
+		"body": "\nlibrary ieee;\nuse ieee.std_logic_1164.all;\nuse ieee.std_logic_unsigned.all;        -- for addition & counting\nuse ieee.numeric_std.all;               -- for type conversions\nuse ieee.math_real.all;                 -- for the ceiling and log constant calculation functions\n\n$0\n",
+		"description": "add VHDL IEEE libraries, delete unwanted",
+		"scope": "source.vhdl"
+	},
+	"loop": {
+		"prefix": "loop",
+		"body": "\nloop\n\t$0\nend loop;\n",
+		"description": "intinite loop",
+		"scope": "source.vhdl"
+	},
+	"ot": {
+		"prefix": "others",
+		"body": "\n(others => '${1:0}');$0\n",
+		"description": "others assignment",
+		"scope": "source.vhdl"
+	},
+	"pa": {
+		"prefix": "package",
+		"body": "\npackage ${1:${TM_FILENAME/(.*?)(\\..+)/$1_p/}} is\n\t$0\nend ${1:${TM_FILENAME/(.*?)(\\..+)/$1_p/}};\n\npackage body ${1:${TM_FILENAME/(.*?)(\\..+)/$1_p/}} is\n\nend ${1:${TM_FILENAME/(.*?)(\\..+)/$1_p/}};\n",
+		"description": "package",
+		"scope": "source.vhdl"
+	},
+	"pb": {
+		"prefix": "package body",
+		"body": "\npackage body ${1:${TM_FILENAME/(.*?)(\\..+)/$1_p/}} is\n  $0\nend ${1:${TM_FILENAME/(.*?)(\\..+)/$1_p/}};\n",
+		"description": "package definition",
+		"scope": "source.vhdl"
+	},
+	"port": {
+		"prefix": "port",
+		"body": "\nport (\n\t\t${1:clock} $0: ${2:std_logic};\n\t);\n",
+		"description": "entity architecture",
+		"scope": "source.vhdl"
+	},
+	"pd": {
+		"prefix": "procedure",
+		"body": "\nprocedure ${1:name} (\n\tsignal ${2:clock} : ${3:std_logic}; --\n) is\nbegin\n\t$0\nend ${1:name};\n",
+		"description": "procedure definition",
+		"scope": "source.vhdl"
+	},
+	"pro": {
+		"prefix": "process",
+		"body": "\n${1:identifier} : process (${2:reset}, ${3:clock})\nbegin\n  if (${2:reset} = '1') then\n    $0\n  elsif (rising_edge(${3:clock})) then\n\n  end if;\nend process ${1:identifier};\n",
+		"description": "synchronous process with asynchronous reset",
+		"scope": "source.vhdl"
+	},
+	"sep": {
+		"prefix": "sep",
+		"body": "\n--------------------------------------------------------------------------------\n$0\n",
+		"description": "separator - 80 chars wide",
+		"scope": "source.vhdl"
+	},
+	"si": {
+		"prefix": "signal",
+		"body": "\nsignal ${1:name} $0: ${2:std_logic};\n",
+		"description": "signal definition",
+		"scope": "source.vhdl"
+	},
+	"s": {
+		"prefix": "signal",
+		"body": "\nsigned(${1:x} downto ${2:0})$0\n",
+		"description": "signed downto",
+		"scope": "source.vhdl"
+	},
+	"sr": {
+		"prefix": "signal",
+		"body": "\nsigned(${1:signal}'range)$0\n",
+		"description": "signed range",
+		"scope": "source.vhdl"
+	},
+	"spro": {
+		"prefix": "process",
+		"body": "\n${1:identifier} : process (${2:clock})\nbegin\n\tif (rising_edge(${2:clock})) then\n\t\t$0\n\tend if;\nend process ${1:identifier};\n",
+		"description": "synchronous process",
+		"scope": "source.vhdl"
+	},
+	"st": {
+		"prefix": "std_logic",
+		"body": "\nstd_logic$0\n",
+		"description": "std_logic type",
+		"scope": "source.vhdl"
+	},
+	"sv": {
+		"prefix": "std_logic_vector",
+		"body": "\nstd_logic_vector(${1:x} downto ${2:0})$0\n",
+		"description": "std_logic_vector downto",
+		"scope": "source.vhdl"
+	},
+	"svr": {
+		"prefix": "std_logic_vector",
+		"body": "\nstd_logic_vector(${1:signal}'range)$0\n",
+		"description": "std_logic_vector range",
+		"scope": "source.vhdl"
+	},
+	"to_i": {
+		"prefix": "to_integer",
+		"body": "\nto_integer(${1:value})$0\n",
+		"description": "to integer type conversion, numeric_std library",
+		"scope": "source.vhdl"
+	},
+	"to_s": {
+		"prefix": "to_signed",
+		"body": "\nto_signed(${1:value}, ${2:width})$0\n",
+		"description": "to signed type conversion, numeric_std library",
+		"scope": "source.vhdl"
+	},
+	"to_u": {
+		"prefix": "to_unsigned",
+		"body": "\nto_unsigned(${1:value}, ${2:width})$0\n",
+		"description": "to unsigned type conversion, numeric_std library",
+		"scope": "source.vhdl"
+	},
+	"u": {
+		"prefix": "unsigned",
+		"body": "\nunsigned(${1:x} downto ${2:0})$0\n",
+		"description": "unsigned downto",
+		"scope": "source.vhdl"
+	},
+	"ur": {
+		"prefix": "unsigned",
+		"body": "\nunsigned(${1:signal}'range);$0\n",
+		"description": "unsigned range",
+		"scope": "source.vhdl"
+	},
+	"vhdl": {
+		"prefix": "library",
+		"body": "\nlibrary ieee;\nuse ieee.std_logic_1164.all;\nuse ieee.std_logic_unsigned.all;        -- for addition & counting\nuse ieee.numeric_std.all;               -- for type conversions\n\nentity ${1:${TM_FILENAME/(.*?)(\\..+)/$1/}} is\n\tport (\n\t\t${2:clock} $0: ${3:in} ${4:std_logic};\n\t) ;\nend ${1:${TM_FILENAME/(.*?)(\\..+)/$1/}};\n\narchitecture ${1:${TM_FILENAME/(.*?)(\\..+)/$1/}}_arc of ${1:${TM_FILENAME/(.*?)(\\..+)/$1/}} is\n\nbegin\n\nend  ${1:${TM_FILENAME/(.*?)(\\..+)/$1/}}_arc;\n",
+		"description": "vhdl template",
+		"scope": "source.vhdl"
+	},
+	"wa": {
+		"prefix": "wait until",
+		"body": "\nwait until (${1:clock}'event and ${1:clock} = '1');\n$0\n",
+		"description": "wait until clock rising edge",
+		"scope": "source.vhdl"
+	},
+	"wt": {
+		"prefix": "wait for",
+		"body": "\nwait for ${1:100} ${2:n}s;\n$0\n",
+		"description": "wait for a time",
+		"scope": "source.vhdl"
+	},
+	"wu": {
+		"prefix": "wait until",
+		"body": "\nwait until ${1:clock} = '1';\n$0\n",
+		"description": "wait until clock is high",
+		"scope": "source.vhdl"
+	},
+	"wl": {
+		"prefix": "while",
+		"body": "\n${1:identifier} : while ${2:expression} loop\n\t$0\nend loop;\n",
+		"description": "while loop",
+		"scope": "source.vhdl"
+	}
+}
