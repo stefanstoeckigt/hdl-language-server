@@ -1,5 +1,5 @@
 {
-  "name": "language-client-example",
+  "name": "hdl-language-client",
   "description": "VSCode part of a language server",
   "author": "Microsoft Corporation",
   "license": "MIT",
@@ -39,22 +39,16 @@
         "path": "./syntaxes/vhdl.tmLanguage"
       }
     ],
-    "snippets": [
-      {
-        "language": "vhdl",
-        "path": "./snippets/vhdl.json"
-      }
-    ],
     "configuration": {
       "type": "object",
-      "title": "Example configuration",
+      "title": "hdl language server configuration",
       "properties": {
-        "languageServerExample.maxNumberOfProblems": {
+        "hdlLanguageServer.maxNumberOfProblems": {
           "type": "number",
           "default": 100,
           "description": "Controls the maximum number of problems produced by the server."
         },
-        "languageServerExample.trace.server": {
+        "hdlLanguageServer.trace.server": {
           "type": "string",
           "enum": [
             "off",
@@ -62,7 +56,22 @@
             "verbose"
           ],
           "default": "messages",
-          "description": "Traces the communication between VSCode and the languageServerExample service."
+          "description": "Traces the communication between VSCode and the HDL language Server service."
+        },
+        "hdlLanguageServer.libraryDeclaration": {
+          "type": "string",
+          "default": "work",
+          "description": "Library location to include in project."
+        },
+        "hdlLanguageServer.libraries": {
+          "type": "array",
+          "default": [
+            "C:\\Garrison_Technology\\VSCode\\hdl-language-server\\hdl-parser\\VHDL_ANTLR4\\Libraries"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Library location to include in project."
         }
       }
     }

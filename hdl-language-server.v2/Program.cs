@@ -16,6 +16,7 @@ using VHDL;
 using VHDL.parser;
 using System.IO;
 using VHDL.ParseError;
+using System.Threading;
 
 namespace SampleServer
 {
@@ -50,16 +51,29 @@ namespace SampleServer
         }
     }
 
-    class TextDocumentHandler : ITextDocumentSyncHandler
+    class TextDocumentHandler 
+        : ITextDocumentSyncHandler 
+        , IHoverHandler
+        , IDefinitionHandler
+        , IReferencesHandler
+        , ICompletionHandler
+        , IRenameHandler
     {
-        private readonly ILanguageServer _router;
         private int maxNumberOfProblems = 100;
 
-        //private VHDL_Library_Manager libraryManager = new VHDL_Library_Manager("", @"Libraries\LibraryRepository.xml", new Logger(@"..\temp.log"));
         VHDL_Library_Manager libraryManager = new VHDL_Library_Manager("", @"Libraries\LibraryRepository.xml", Logger.CreateLogger(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "compiler"));
         VhdlParserSettings settings = VhdlParserWrapper.DEFAULT_SETTINGS;
         RootDeclarativeRegion rootScope = new RootDeclarativeRegion();
         LibraryDeclarativeRegion currentLibrary = new LibraryDeclarativeRegion("work");
+
+        private readonly ILanguageServer _router;
+        public TextDocumentHandler(ILanguageServer router)
+        {
+            libraryManager.LoadData(@"Libraries");
+            rootScope.Libraries.Add(currentLibrary);
+            rootScope.Libraries.Add(libraryManager.GetLibrary("STD"));
+            _router = router;
+        }
 
         private readonly DocumentSelector _documentSelector = new DocumentSelector(
             new DocumentFilter()
@@ -68,13 +82,6 @@ namespace SampleServer
                 Language = "vhdl"
             }
         );
-
-        private SynchronizationCapability _capability;
-
-        public TextDocumentHandler(ILanguageServer router)
-        {
-            _router = router;
-        }
 
         public TextDocumentSyncOptions Options { get; } = new TextDocumentSyncOptions()
         {
@@ -88,29 +95,27 @@ namespace SampleServer
             OpenClose = true
         };
 
-        public Task Handle(DidChangeTextDocumentParams notification)
+
+
+        public TextDocumentAttributes GetTextDocumentAttributes(Uri uri)
         {
-            libraryManager.LoadData(@"Libraries");
-            rootScope.Libraries.Add(currentLibrary);
-            rootScope.Libraries.Add(libraryManager.GetLibrary("STD"));
-
-            foreach (var change in notification.ContentChanges)
-            {
-                VHDLParser(notification.TextDocument.Uri, change.Text);
-
-                //TestExample(notification.TextDocument.Uri, change.Text);
-            }
-
             _router.LogMessage(new LogMessageParams()
             {
                 Type = MessageType.Log,
-                Message = "Hello!"
+                Message = "GetTextDocumentAttributes " + uri.ToString()
             });
-            return Task.CompletedTask;
+            return new TextDocumentAttributes(uri, "vhdl");
         }
 
 
+        #region Change
+        // --------------- Change ------------------------------------------
+        public async Task Handle(DidChangeTextDocumentParams notification)
+        {
+            foreach (var change in notification.ContentChanges)
+                VHDLParser(notification.TextDocument.Uri, change.Text);
 
+        }
 
         TextDocumentChangeRegistrationOptions IRegistration<TextDocumentChangeRegistrationOptions>.GetRegistrationOptions()
         {
@@ -120,15 +125,12 @@ namespace SampleServer
                 SyncKind = Options.Change
             };
         }
+        #endregion Change
 
-        public void SetCapability(SynchronizationCapability capability)
-        {
-            _capability = capability;
-        }
-
+        #region Open
+        // --------------- Open ------------------------------------------
         public async Task Handle(DidOpenTextDocumentParams notification)
         {
-            TestExample(notification.TextDocument.Uri, notification.TextDocument.Text);
             _router.LogMessage(new LogMessageParams()
             {
                 Type = MessageType.Log,
@@ -143,12 +145,19 @@ namespace SampleServer
                 DocumentSelector = _documentSelector,
             };
         }
+        #endregion Open
 
+
+        #region Close
+        // --------------- Close ------------------------------------------
         public Task Handle(DidCloseTextDocumentParams notification)
         {
             return Task.CompletedTask;
         }
+        #endregion Close
 
+        #region Save
+        // --------------- Save ------------------------------------------
         public Task Handle(DidSaveTextDocumentParams notification)
         {
             return Task.CompletedTask;
@@ -162,18 +171,100 @@ namespace SampleServer
                 IncludeText = Options.Save.IncludeText
             };
         }
-        public TextDocumentAttributes GetTextDocumentAttributes(Uri uri)
+
+        private SynchronizationCapability _SynchronizationCapability;
+
+        public void SetCapability(SynchronizationCapability capability)
         {
-            return new TextDocumentAttributes(uri, "vhdl");
+            _SynchronizationCapability = capability;
         }
+
+        #endregion Save
+
+        #region Hover
+        public Task<Hover> Handle(TextDocumentPositionParams request, CancellationToken token)
+        {
+            return Task.FromResult(new Hover());
+        }
+
+        private HoverCapability _HoverCapability;
+        public void SetCapability(HoverCapability capability)
+        {
+            _HoverCapability = capability;
+        }
+        #endregion Hover
+
+
+        #region Definition 
+        Task<LocationOrLocations> IRequestHandler<TextDocumentPositionParams, LocationOrLocations>.Handle(TextDocumentPositionParams request, CancellationToken token)
+        {
+            return Task.FromResult(new LocationOrLocations());
+        }
+
+        DefinitionCapability _DefinitionCapability;
+        public void SetCapability(DefinitionCapability capability)
+        {
+            _DefinitionCapability = capability;
+        }
+        #endregion
+
+        #region References
+        public Task<LocationContainer> Handle(ReferenceParams request, CancellationToken token)
+        {
+            return Task.FromResult(new LocationContainer());
+        }
+
+        ReferencesCapability _ReferencesCapability;
+        public void SetCapability(ReferencesCapability capability)
+        {
+            _ReferencesCapability = capability;
+        }
+        #endregion References
+
+        #region Completion
+        Task<CompletionList> IRequestHandler<TextDocumentPositionParams, CompletionList>.Handle(TextDocumentPositionParams request, CancellationToken token)
+        {
+            return Task.FromResult(new CompletionList(Enumerable.Empty<CompletionItem>()));
+        }
+
+        public CompletionRegistrationOptions GetRegistrationOptions()
+        {
+            return new CompletionRegistrationOptions()
+            {
+                DocumentSelector = _documentSelector,
+                TriggerCharacters = new Container<string>(new string[] { }),
+                ResolveProvider = false
+            };
+        }
+
+        CompletionCapability _CompletionCapability;
+        public void SetCapability(CompletionCapability capability)
+        {
+            _CompletionCapability = capability;
+        }
+        #endregion Completion
+
+        #region Rename Symbol
+        public Task<WorkspaceEdit> Handle(RenameParams request, CancellationToken token)
+        {
+            return Task.FromResult(new WorkspaceEdit());
+        }
+
+        RenameCapability _RenameCapability;
+        public void SetCapability(RenameCapability capability)
+        {
+            _RenameCapability = capability;
+        }
+        #endregion Rename Symbol
 
         public void VHDLParser(Uri uri, string text)
         {
             bool success = true;
+            string logMessage = "";
             var diagnostic = new List<Diagnostic>();
             try
             {
-                Console.WriteLine("Parsing code");
+                logMessage += "Parsing code\n";
                 var parsed = VHDL.parser.VhdlParserWrapper.parseString(text, settings, rootScope, currentLibrary, libraryManager);
             }
             catch (vhdlParseException ex)
@@ -187,21 +278,18 @@ namespace SampleServer
                     Source = "ex"
                 });
 
+                logMessage += string.Format("{0} {1}:{2} {3} {4} {5}", ex.FilePath, ex.Line, ex.CharPositionInLine, ex.OffendingSymbol.Text, ex.Message, ex.InnerException) + "\nParsing failed\n";
 
-                Console.WriteLine(string.Format("{0} {1}:{2} {3} {4} {5}", ex.FilePath, ex.Line, ex.CharPositionInLine, ex.OffendingSymbol.Text, ex.Message, ex.InnerException));
-                Console.WriteLine("Parsing failed");
                 success = false;
             }
             catch (vhdlSemanticException ex)
             {
-                Console.WriteLine(ex.GetConsoleMessageTest());
-                Console.WriteLine("Parsing failed");
+                logMessage += ex.GetConsoleMessageTest() + "\nParsing failed\n";
                 success = false;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(string.Format("{0} {1} {2} \n {3}", ex.Message, ex.InnerException, ex.Source, ex.StackTrace));
-                Console.WriteLine("Parsing failed");
+
                 success = false;
             }
 
@@ -210,51 +298,46 @@ namespace SampleServer
                 Uri = uri,
                 Diagnostics = diagnostic
             };
-
+            Console.WriteLine(logMessage);
             _router.PublishDiagnostics(model);
         }
 
-
-        public void TestExample(Uri uri, string text)
-        {
-            var problems = 0;
-            var diagnostic = new List<Diagnostic>();
-
-            var lines = Regex.Split(text.Replace("\t", ""), @"\r?\n");
-            for (var i = 1; i < lines.Length; i++)
-            {
-                var line = lines[i];
-                var matchs = Regex.Matches(line, "Entity");
-                if (matchs.Count > 0)
-                {
-                    foreach (Match match in matchs)
-                    {
-                        problems++;
-                        diagnostic.Add(new Diagnostic()
-                        {
-                            Code = new DiagnosticCode("ex"),
-                            Message = $"{0} should be spelled entity",
-                            Range = new Lsp.Models.Range(new Position(i, match.Index), new Position(i, match.Index + match.Length)),
-                            Severity = DiagnosticSeverity.Warning,
-                            Source = "ex"
-                        });
-
-                        if (problems > maxNumberOfProblems)
-                            break;
-                    }
-                }
-
-
-            }
-
-            var model = new PublishDiagnosticsParams()
-            {
-                Uri = uri,
-                Diagnostics = diagnostic
-            };
-
-            _router.PublishDiagnostics(model);
-
-        }
     }
+    /*
+    class DidChangeConfigurationHandler : IDidChangeConfigurationHandler
+    {
+
+        public DidChangeConfigurationHandler()
+        {
+
+        }
+
+        DidChangeConfigurationHandler IRegistration<object>.GetRegistrationOptions()
+        {
+            return null;
+        }
+
+        DidChangeConfigurationHandler INotificationHandler<DidChangeConfigurationParams>()
+        {
+            return null;
+        }
+
+        DidChangeConfigurationCapability ICapability<DidChangeConfigurationCapability>.SetCapability(DidChangeConfigurationCapability capability)
+        {
+            return null;
+        }
+
+
+        public Task Handle(DidChangeConfigurationParams notification)
+        {
+
+            return Task.CompletedTask;
+        }
+
+        public Task Handle(DidChangeConfigurationCapability notification)
+        {
+            return Task.CompletedTask;
+        }
+
+    }*/
 }

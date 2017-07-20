@@ -21,8 +21,8 @@ function startLangServer(command: string, documentSelector: string[]): Disposabl
     const clientOptions: LanguageClientOptions = {
         documentSelector: documentSelector,
         synchronize: {
-            // Synchronize the setting section 'languageServerExample' to the server
-            configurationSection: 'languageServerExample',
+            // Synchronize the setting section 'hdlLanguageServer' to the server
+            configurationSection: 'hdlLanguageServer',
             // Notify the server about file changes to '.clientrc files contain in the workspace
             fileEvents: workspace.createFileSystemWatcher('**/.clientrc')
         },
@@ -46,8 +46,8 @@ function startLangServerTCP(addr: number, documentSelector: string[]): Disposabl
     const clientOptions: LanguageClientOptions = {
         documentSelector: documentSelector,
         synchronize: {
-            // Synchronize the setting section 'languageServerExample' to the server
-            configurationSection: 'languageServerExample',
+            // Synchronize the setting section 'hdlLanguageServer' to the server
+            configurationSection: 'hdlLanguageServer',
             // Notify the server about file changes to '.clientrc files contain in the workspace
             fileEvents: workspace.createFileSystemWatcher('**/.clientrc')
         },
