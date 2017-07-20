@@ -58,6 +58,7 @@ namespace SampleServer
         , IReferencesHandler
         , ICompletionHandler
         , IRenameHandler
+        
     {
         private int maxNumberOfProblems = 100;
 
@@ -257,6 +258,17 @@ namespace SampleServer
         }
         #endregion Rename Symbol
 
+        /*
+        Task INotificationHandler<DidChangeConfigurationParams>.Handle(DidChangeConfigurationParams notification)
+        {
+            return null;
+        }
+
+        public Task<DidChangeConfigurationCapability> ICapability<DidChangeConfigurationCapability>.SetCapability(DidChangeConfigurationCapability capability)
+        {
+            return null;
+        }*/
+
         public void VHDLParser(Uri uri, string text)
         {
             bool success = true;
@@ -303,41 +315,5 @@ namespace SampleServer
         }
 
     }
-    /*
-    class DidChangeConfigurationHandler : IDidChangeConfigurationHandler
-    {
 
-        public DidChangeConfigurationHandler()
-        {
-
-        }
-
-        DidChangeConfigurationHandler IRegistration<object>.GetRegistrationOptions()
-        {
-            return null;
-        }
-
-        DidChangeConfigurationHandler INotificationHandler<DidChangeConfigurationParams>()
-        {
-            return null;
-        }
-
-        DidChangeConfigurationCapability ICapability<DidChangeConfigurationCapability>.SetCapability(DidChangeConfigurationCapability capability)
-        {
-            return null;
-        }
-
-
-        public Task Handle(DidChangeConfigurationParams notification)
-        {
-
-            return Task.CompletedTask;
-        }
-
-        public Task Handle(DidChangeConfigurationCapability notification)
-        {
-            return Task.CompletedTask;
-        }
-
-    }*/
 }
