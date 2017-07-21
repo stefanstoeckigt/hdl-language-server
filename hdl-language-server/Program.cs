@@ -35,15 +35,15 @@ namespace SampleServer
             //    await Task.Delay(100);
             //}
 
-            var ipEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5001);
-            var listener = new TcpListener(ipEndPoint);
-            listener.Server.LingerState = new LingerOption(true, 10);
-            listener.Start();
+            //var ipEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5001);
+            //var listener = new TcpListener(ipEndPoint);
+            //listener.Server.LingerState = new LingerOption(true, 10);
+            //listener.Start();
 
-            var client = await listener.AcceptTcpClientAsync();
+            //var client = await listener.AcceptTcpClientAsync();
 
-            //var server = new LanguageServer(Console.OpenStandardInput(), Console.OpenStandardOutput());
-            var server = new LanguageServer(client.GetStream(), client.GetStream());
+            var server = new LanguageServer(Console.OpenStandardInput(), Console.OpenStandardOutput());
+            //var server = new LanguageServer(client.GetStream(), client.GetStream());
 
             server.AddHandler(new TextDocumentHandler(server));
 
@@ -61,19 +61,29 @@ namespace SampleServer
         , IRenameHandler
         
     {
-        private int maxNumberOfProblems = 100;
-        static private string path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-        VHDL_Library_Manager libraryManager = new VHDL_Library_Manager("", path + @"\Libraries\LibraryRepository.xml", Logger.CreateLogger(path, "compiler"));
-        VhdlParserSettings settings = VhdlParserWrapper.DEFAULT_SETTINGS;
-        RootDeclarativeRegion rootScope = new RootDeclarativeRegion();
-        LibraryDeclarativeRegion currentLibrary = new LibraryDeclarativeRegion("work");
+
+        private VHDL_Library_Manager _libraryManager;
+        private VhdlParserSettings _settings;
+        private RootDeclarativeRegion _rootScope;
+        private LibraryDeclarativeRegion _currentLibrary;
 
         private readonly ILanguageServer _router;
+        private int maxNumberOfProblems = 100;
+
         public TextDocumentHandler(ILanguageServer router)
         {
-            libraryManager.LoadData(path + @"\Libraries");
-            rootScope.Libraries.Add(currentLibrary);
-            rootScope.Libraries.Add(libraryManager.GetLibrary("STD"));
+            var writer = new StreamWriter(new MemoryStream());
+            var logger = new VHDL.parser.Logger(writer.BaseStream);
+
+            string path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            _libraryManager = new VHDL_Library_Manager("", path + @"\Libraries\LibraryRepository.xml", logger);
+            _settings = VhdlParserWrapper.DEFAULT_SETTINGS;
+            _rootScope = new RootDeclarativeRegion();
+            _currentLibrary = new LibraryDeclarativeRegion("work");
+
+            _libraryManager.LoadData(path + @"\Libraries");
+            _rootScope.Libraries.Add(_currentLibrary);
+            _rootScope.Libraries.Add(_libraryManager.GetLibrary("STD"));
             _router = router;
         }
 
@@ -271,7 +281,7 @@ namespace SampleServer
             try
             {
                 logMessage += "Parsing code\n";
-                var parsed = VHDL.parser.VhdlParserWrapper.parseString(text, settings, rootScope, currentLibrary, libraryManager);
+                var parsed = VHDL.parser.VhdlParserWrapper.parseString(text, _settings, _rootScope, _currentLibrary, _libraryManager);
                 logMessage += "Done Parsing\n";
             }
             catch (vhdlParseException ex)
@@ -280,7 +290,7 @@ namespace SampleServer
                 {
                     Code = new DiagnosticCode("ex"),
                     Message = ex.Message,
-                    Range = new Lsp.Models.Range(new Position(ex.Line-1, ex.CharPositionInLine), new Position(ex.Line-1, ex.CharPositionInLine + ex.OffendingSymbol.Text.Length)),
+                    Range = new Lsp.Models.Range(new Position(ex.Line - 1, ex.CharPositionInLine), new Position(ex.Line - 1, ex.CharPositionInLine + ex.OffendingSymbol.Text.Length)),
                     Severity = DiagnosticSeverity.Error,
                     Source = "ex"
                 });
@@ -312,6 +322,12 @@ namespace SampleServer
             };
             //Console.WriteLine(logMessage);
             _router.PublishDiagnostics(model);
+
+            _router.LogMessage(new LogMessageParams()
+            {
+                Type = MessageType.Log,
+                Message = logMessage
+            });
         }
 
     }

@@ -57,8 +57,8 @@ function startLangServerTCP(addr: number, documentSelector: string[]): Disposabl
 }
 
 export function activate(context: ExtensionContext) {
-    //let serverExe = context.asAbsolutePath('./server/hdl-language-server.exe');
-    //context.subscriptions.push(startLangServer(serverExe, ["vhdl"]));
+    let serverExe = context.asAbsolutePath('./server/hdl-language-server.exe');
+    context.subscriptions.push(startLangServer(serverExe, ["vhdl"]));
     // For TCP
-    context.subscriptions.push(startLangServerTCP(5001, ["vhdl"]));
+    //context.subscriptions.push(startLangServerTCP(5001, ["vhdl"]));
 }

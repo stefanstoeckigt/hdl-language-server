@@ -4,7 +4,7 @@
   "author": "Stefan Stoeckigt",
   "license": "MIT",
   "version": "0.0.2",
-  "publisher": "Stefan Stoeckigt",
+  "publisher": "VSCode",
   "engines": {
     "vscode": "^1.8.0"
   },
