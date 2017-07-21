@@ -7,6 +7,7 @@
 import * as path from 'path';
 import * as net from 'net';
 
+import cp = require("child_process");
 import { workspace, Disposable, ExtensionContext } from 'vscode';
 import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, ErrorAction, ErrorHandler, CloseAction, TransportKind } from 'vscode-languageclient';
 
@@ -56,7 +57,7 @@ function startLangServerTCP(addr: number, documentSelector: string[]): Disposabl
 }
 
 export function activate(context: ExtensionContext) {
-    //let serverExe = context.asAbsolutePath('../sample/SampleServer/bin/Debug/netcoreapp1.1/win7-x64/SampleServer.exe');
+    //let serverExe = context.asAbsolutePath('./server/hdl-language-server.exe');
     //context.subscriptions.push(startLangServer(serverExe, ["vhdl"]));
     // For TCP
     context.subscriptions.push(startLangServerTCP(5001, ["vhdl"]));

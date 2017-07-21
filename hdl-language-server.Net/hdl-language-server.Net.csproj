@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\hdl-parser\VHDL\VHDL.csproj" />
+    <ProjectReference Include="..\..\hdl-parser\VHDL_ANTLR4\VHDL_ANTLR4.csproj" />
+    <ProjectReference Include="..\..\language-server-protocol\src\JsonRpc\JsonRpc.csproj" />
+    <ProjectReference Include="..\..\language-server-protocol\src\Lsp\Lsp.csproj" />
+    <ProjectReference Include="..\hdl-parser\VHDL\VHDL.csproj" />
+    <ProjectReference Include="..\hdl-parser\VHDL_ANTLR4\VHDL_ANTLR4.csproj" />
+    <ProjectReference Include="..\language-server-protocol\src\JsonRpc\JsonRpc.csproj" />
+    <ProjectReference Include="..\language-server-protocol\src\Lsp\Lsp.csproj" />
+  </ItemGroup>
+
+</Project>
