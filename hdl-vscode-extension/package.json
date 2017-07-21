@@ -1,13 +1,14 @@
 {
-  "name": "hdl-language-client",
-  "description": "VSCode part of a language server",
-  "author": "Microsoft Corporation",
+  "name": "hdl-language-server",
+  "description": "VSCode part of a hdl language server",
+  "author": "Stefan Stoeckigt",
   "license": "MIT",
-  "version": "0.0.1",
-  "publisher": "vscode",
+  "version": "0.0.2",
+  "publisher": "Stefan Stoeckigt",
   "engines": {
     "vscode": "^1.8.0"
   },
+
   "categories": [
     "Other"
   ],
