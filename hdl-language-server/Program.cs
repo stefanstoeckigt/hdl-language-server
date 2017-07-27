@@ -26,6 +26,7 @@ namespace SampleServer
         static void Main(string[] args)
         {
             var ipEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5001);
+            //MainAsync(args, ipEndPoint).Wait(5000);
             MainAsync(args).Wait();
         }
 
@@ -33,6 +34,7 @@ namespace SampleServer
         {
             //while (!System.Diagnostics.Debugger.IsAttached)
             //{
+            //    System.Diagnostics.Debugger.Launch();
             //    await Task.Delay(100);
             //}
 
