@@ -25,6 +25,7 @@ namespace SampleServer
 
         static void Main(string[] args)
         {
+            var ipEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5001);
             MainAsync(args).Wait();
         }
 
@@ -35,16 +36,24 @@ namespace SampleServer
             //    await Task.Delay(100);
             //}
 
-            //var ipEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5001);
-            //var listener = new TcpListener(ipEndPoint);
-            //listener.Server.LingerState = new LingerOption(true, 10);
-            //listener.Start();
-
-            //var client = await listener.AcceptTcpClientAsync();
-
             var server = new LanguageServer(Console.OpenStandardInput(), Console.OpenStandardOutput());
-            //var server = new LanguageServer(client.GetStream(), client.GetStream());
 
+            server.AddHandler(new TextDocumentHandler(server));
+
+            await server.Initialize();
+            await server.WasShutDown;
+        }
+
+        static async Task MainAsync(string[] args, IPEndPoint ipEndPoint)
+        {
+
+            var listener = new TcpListener(ipEndPoint);
+            listener.Server.LingerState = new LingerOption(true, 10);
+            listener.Start();
+
+            var client = await listener.AcceptTcpClientAsync();
+
+            var server = new LanguageServer(client.GetStream(), client.GetStream());
             server.AddHandler(new TextDocumentHandler(server));
 
             await server.Initialize();
@@ -61,7 +70,6 @@ namespace SampleServer
         , IRenameHandler
         
     {
-
         private VHDL_Library_Manager _libraryManager;
         private VhdlParserSettings _settings;
         private RootDeclarativeRegion _rootScope;
@@ -107,8 +115,6 @@ namespace SampleServer
             OpenClose = true
         };
 
-
-
         public TextDocumentAttributes GetTextDocumentAttributes(Uri uri)
         {
             _router.LogMessage(new LogMessageParams()
@@ -142,7 +148,7 @@ namespace SampleServer
         // --------------- Open ------------------------------------------
         public async Task Handle(DidOpenTextDocumentParams notification)
         {
-
+            VHDLParser(notification.TextDocument.Uri, notification.TextDocument.Text);
         }
 
         TextDocumentRegistrationOptions IRegistration<TextDocumentRegistrationOptions>.GetRegistrationOptions()
